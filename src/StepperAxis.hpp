@@ -7,26 +7,19 @@
 #include "RAMPSController.hpp"
 
 /**
- * Plotter encapsulation. All arguments in millimeters unless otherwise specified.
+ * Stepper Motor encapsulation.
  */
-class Plotter {
+class StepperAxis {
 public:
   /*******************************
    * Constructors
-   *******************************/
-  Plotter();
+   *******************************/  
+  StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int maxPin);
 
   /*******************************
    * Actions
    *******************************/
-  // Calculates the transform that would be required to level the bed
-  void calibrateBedLevel();
-  // Draws a rectangle
-  void drawRect(Point* origin, float length, float width);
-  // Draws a triangle
-  void drawTriangle(Point* p1, Point* p2, Point* p3);
-  // Draws a circle
-  void drawCircle(Point* centre, float radius);
+  void singleStep();
 
 protected:
 private:
@@ -38,19 +31,19 @@ private:
   // Lower the pen onto the paper
   void lower();
   // Move the pen from it's current location to the specified point
-  void move(Point* toPoint);
+  void move(Point toPoint);
   // Move the pen to the home position
   void home();
 
   /*******************************
    * Member variables (fields)
    *******************************/
-  // The current location of the pen
-  Point* mCurrentLocation;
-  // True when the pen is in the "lowered" state
-  bool mLowered;
-  // The bed levelling transform matrix
-//  MatrixXd mBedLevellingTransform;
+  // Arduino Step Pin for Motor
+  int mStepPin;
+  int mDirPin;
+  int mEnablePin;
+  int mMinPin;
+  int mMaxPin;
 
 };
 

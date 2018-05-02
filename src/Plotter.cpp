@@ -15,7 +15,7 @@ void Plotter::calibrateBedLevel() {
 }
 
 // Adding some comments
-void Plotter::drawRect(Point origin, float length, float width) {
+void Plotter::drawRect(Point* origin, float length, float width) {
   // TODO: Add range error checking
   // Raise pen
   // Move to origin
@@ -27,11 +27,11 @@ void Plotter::drawRect(Point origin, float length, float width) {
   // Raise pen
 }
 
-void Plotter::drawTriangle(Point p1, Point p2, Point p3) {
+void Plotter::drawTriangle(Point* p1, Point* p2, Point* p3) {
 
 }
 
-void Plotter::drawCircle(Point centre, float radius) {
+void Plotter::drawCircle(Point* centre, float radius) {
 
 }
 
@@ -45,7 +45,7 @@ void Plotter::lower() {
 
 }
 
-void Plotter::move(Point toPoint) {
+void Plotter::move(Point* toPoint) {
 
 }
 
