@@ -19,3 +19,7 @@ void StepperAxis::singleStep(int direction) {
   digitalWrite(mStepPin, HIGH);
   digitalWrite(mStepPin, LOW);
 }
+
+void StepperAxis::home() {
+  
+}

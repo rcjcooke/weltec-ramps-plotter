@@ -2,11 +2,12 @@
 
 #include "Plotter.hpp"
 
+Plotter* mPlotter;
+
+void setup() {
+  mPlotter = new Plotter();  
+}
+
 void loop() {
-  int i;
-  Plotter* p;
-  p = new Plotter();
-  Point* origin = new Point(5,6);
-  p->drawRect(origin, 4, 5);
   
 }

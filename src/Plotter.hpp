@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 //#include <Eigen>
+#include "queue.h"
+
+#include "TimeInstruction.hpp"
 #include "Point.hpp"
 #include "RAMPSController.hpp"
 #include "StepperAxis.hpp"
@@ -59,6 +62,9 @@ private:
   bool mLowered;
   // The bed levelling transform matrix
 //  MatrixXd mBedLevellingTransform;
+
+  // Buffer that contains instructions for what to move in a given time interval
+  etl::queue<TimeInstruction,30>* mTimeBuffer;
 
 };
 
