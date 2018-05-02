@@ -5,6 +5,7 @@
 //#include <Eigen>
 #include "Point.hpp"
 #include "RAMPSController.hpp"
+#include "StepperAxis.hpp"
 
 /**
  * Plotter encapsulation. All arguments in millimeters unless otherwise specified.
@@ -45,6 +46,13 @@ private:
   /*******************************
    * Member variables (fields)
    *******************************/
+  // X Axis Stepper Motor RAMPSController
+  StepperAxis* mXAxis;
+  // Y Axis Stepper Motor RAMPSController
+  StepperAxis* mYAxis;
+  // Z Axis Stepper Motor RAMPSController
+  StepperAxis* mZAxis;  
+  
   // The current location of the pen
   Point* mCurrentLocation;
   // True when the pen is in the "lowered" state

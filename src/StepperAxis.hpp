@@ -1,5 +1,5 @@
-#ifndef __PLOTTER_H_INCLUDED__
-#define __PLOTTER_H_INCLUDED__
+#ifndef __STEPPERAXIS_H_INCLUDED__
+#define __STEPPERAXIS_H_INCLUDED__
 
 #include <Arduino.h>
 //#include <Eigen>
@@ -19,7 +19,7 @@ public:
   /*******************************
    * Actions
    *******************************/
-  void singleStep();
+  void singleStep(int direction);
 
 protected:
 private:
@@ -41,4 +41,4 @@ private:
 
 };
 
-#endif // __PLOTTER_H_INCLUDED__
+#endif // __STEPPERAXIS_H_INCLUDED__
