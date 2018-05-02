@@ -14,6 +14,7 @@ void Plotter::calibrateBedLevel() {
 
 }
 
+// Adding some comments
 void Plotter::drawRect(Point origin, float length, float width) {
   // TODO: Add range error checking
   // Raise pen
