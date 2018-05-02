@@ -26,13 +26,7 @@ private:
   /*******************************
    * Actions
    *******************************/
-  // Raise the pen up so it's away from the paper
-  void raise();
-  // Lower the pen onto the paper
-  void lower();
-  // Move the pen from it's current location to the specified point
-  void move(Point toPoint);
-  // Move the pen to the home position
+  // Move the stepper back to the home position
   void home();
 
   /*******************************
