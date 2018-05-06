@@ -19,6 +19,7 @@ public:
    * Constructors
    *******************************/
   Plotter();
+  ~Plotter();
 
   /*******************************
    * Actions

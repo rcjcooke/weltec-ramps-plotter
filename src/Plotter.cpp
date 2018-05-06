@@ -5,11 +5,17 @@
  *******************************/
 Plotter::Plotter() {
   // Set up axes
-  mXAxis = new StepperAxis(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN);
-  mYAxis = new StepperAxis(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN);
-  mZAxis = new StepperAxis(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN);
+  mXAxis = new StepperAxis(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, 500000);
+  mYAxis = new StepperAxis(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, 500000);
+  mZAxis = new StepperAxis(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 500000);
   // Home everything
   home();
+}
+
+Plotter::~Plotter() {
+  delete mXAxis;
+  delete mYAxis;
+  delete mZAxis;
 }
 
 /*******************************
@@ -55,5 +61,11 @@ void Plotter::move(Point* toPoint) {
 }
 
 void Plotter::home() {
+
+  while (!mXAxis->isHome() && !mXAxis->isHome() && !mXAxis->isHome()) {
+      mXAxis->singleStep(Direction::TowardsHome);
+      mYAxis->singleStep(Direction::TowardsHome);
+      mZAxis->singleStep(Direction::TowardsHome);
+  }
 
 }
