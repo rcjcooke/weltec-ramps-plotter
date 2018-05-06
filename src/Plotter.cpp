@@ -5,11 +5,16 @@
  *******************************/
 Plotter::Plotter() {
   // Set up axes
-  mXAxis = new StepperAxis(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, 500000);
-  mYAxis = new StepperAxis(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, 500000);
-  mZAxis = new StepperAxis(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 500000);
+  mXAxis = new StepperAxis(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, 500000, false);
+  mYAxis = new StepperAxis(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, 500000, true);
+  mZAxis = new StepperAxis(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 500000, true);
   // Home everything
   home();
+
+  // Turn the stepper motor power offto avoid thermal overload
+  mXAxis->disable();
+  mYAxis->disable();
+  mZAxis->disable();
 }
 
 Plotter::~Plotter() {
@@ -61,11 +66,9 @@ void Plotter::move(Point* toPoint) {
 }
 
 void Plotter::home() {
-
-  while (!mXAxis->isHome() && !mXAxis->isHome() && !mXAxis->isHome()) {
-      mXAxis->singleStep(Direction::TowardsHome);
-      mYAxis->singleStep(Direction::TowardsHome);
-      mZAxis->singleStep(Direction::TowardsHome);
+  while (!(mXAxis->isHome() && mYAxis->isHome() && mZAxis->isHome())) {
+    mXAxis->singleStep(Direction::TowardsHome);
+    mYAxis->singleStep(Direction::TowardsHome);
+    mZAxis->singleStep(Direction::TowardsHome);
   }
-
 }

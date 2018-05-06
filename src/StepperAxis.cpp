@@ -1,20 +1,23 @@
 #include "StepperAxis.hpp"
 
-#define MIN_STEP_DELAY 5
+#define MIN_STEP_DELAY 1
 
 /*******************************
  * Constructors
  *******************************/  
-StepperAxis::StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int maxPin, long maxSteps) {
+StepperAxis::StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int maxPin, long maxSteps, bool invertDirection) {
   mStepPin = stepPin;
   mDirPin = dirPin;
   mEnablePin = enablePin;
   mMinPin = minPin;
   mMaxPin = maxPin;
-  mEarliestNextStepMillis = millis();
   mMaxSteps = maxSteps;
+  mInvertDirection = invertDirection;
 
+  mEarliestNextStepMillis = millis();
   mCurrentStepLocation = 0;
+  mHome = false;
+  mAtMax = false;
 
   // Set up the modes
   pinMode(mStepPin, OUTPUT);
@@ -26,7 +29,7 @@ StepperAxis::StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int
   pinMode(mMaxPin, INPUT_PULLUP);
 
   // Power it up
-  digitalWrite(mEnablePin, LOW);
+  enable();
 }
 
 /*******************************
@@ -56,7 +59,7 @@ void StepperAxis::singleStep(int direction) {
   }
 
   if (okToMove) {
-    digitalWrite(mDirPin, direction);
+    digitalWrite(mDirPin, mInvertDirection ? !direction : direction);
     digitalWrite(mStepPin, HIGH);
     digitalWrite(mStepPin, LOW);
     mEarliestNextStepMillis = mEarliestNextStepMillis + MIN_STEP_DELAY;
@@ -83,4 +86,12 @@ void StepperAxis::home() {
     while (!isHome()) {
       singleStep(Direction::TowardsHome);
   }
+}
+
+void StepperAxis::enable() {
+  digitalWrite(mEnablePin, LOW);
+}
+
+void StepperAxis::disable() {
+  digitalWrite(mEnablePin, HIGH);
 }

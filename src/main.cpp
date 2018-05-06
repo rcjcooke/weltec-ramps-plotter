@@ -5,8 +5,10 @@
 Plotter* mPlotter;
 
 void setup() {
-  mPlotter = new Plotter();  
+  // Creates Plotter controller and homes it
+  mPlotter = new Plotter();
 }
 
 void loop() {
+
 }

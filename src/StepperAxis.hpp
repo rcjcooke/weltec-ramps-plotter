@@ -6,7 +6,7 @@
 #include "Point.hpp"
 #include "RAMPSController.hpp"
 
-enum Direction {
+enum Direction : uint8_t {
   TowardsHome=HIGH,
   AwayFromHome=LOW
 };
@@ -19,7 +19,7 @@ public:
   /*******************************
    * Constructors
    *******************************/  
-  StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int maxPin, long maxSteps);
+  StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int maxPin, long maxSteps, bool invertDirection);
 
   /*******************************
    * Accessors
@@ -36,6 +36,10 @@ public:
   void singleStep(int direction);
   // Move the stepper back to the home position
   void home();
+  // Turn the power off
+  void disable();
+  // Turn the power on
+  void enable();
 
 protected:
 private:
@@ -53,10 +57,11 @@ private:
   uint8_t mMinPin;
   uint8_t mMaxPin;
   long mMaxSteps;
+  bool mInvertDirection;
 
   bool mAtMax;
   bool mHome;
-  long mEarliestNextStepMillis;
+  unsigned long mEarliestNextStepMillis;
 
   long mCurrentStepLocation;
 };
