@@ -61,7 +61,7 @@ private:
 
   bool mAtMax;
   bool mHome;
-  unsigned long mEarliestNextStepMillis;
+  unsigned long mEarliestNextStepMicros;
 
   long mCurrentStepLocation;
 };

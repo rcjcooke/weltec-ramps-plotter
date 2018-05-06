@@ -1,6 +1,7 @@
 #include "StepperAxis.hpp"
 
-#define MIN_STEP_DELAY 1
+// Microseconds
+#define MIN_STEP_DELAY 500
 
 /*******************************
  * Constructors
@@ -14,7 +15,7 @@ StepperAxis::StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int
   mMaxSteps = maxSteps;
   mInvertDirection = invertDirection;
 
-  mEarliestNextStepMillis = millis();
+  mEarliestNextStepMicros = micros();
   mCurrentStepLocation = 0;
   mHome = false;
   mAtMax = false;
@@ -48,7 +49,7 @@ bool StepperAxis::isAtMax() const {
  *******************************/
 void StepperAxis::singleStep(int direction) {
   // Wait until the earliest time we can next step
-  while (millis() < mEarliestNextStepMillis) {}
+  while (micros() < mEarliestNextStepMicros) {}
 
   // Make sure we don't overshoot the end of the axis
   bool okToMove = false;
@@ -62,7 +63,7 @@ void StepperAxis::singleStep(int direction) {
     digitalWrite(mDirPin, mInvertDirection ? !direction : direction);
     digitalWrite(mStepPin, HIGH);
     digitalWrite(mStepPin, LOW);
-    mEarliestNextStepMillis = mEarliestNextStepMillis + MIN_STEP_DELAY;
+    mEarliestNextStepMicros = mEarliestNextStepMicros + MIN_STEP_DELAY;
   }
 
   switch(direction) {
