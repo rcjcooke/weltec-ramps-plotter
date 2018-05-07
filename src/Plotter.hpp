@@ -10,6 +10,14 @@
 #include "RAMPSController.hpp"
 #include "StepperAxis.hpp"
 
+#define LOWER_Z_STEP_POSITION = 1000;
+
+enum Axis {
+  X,
+  Y,
+  Z
+};
+
 /**
  * Plotter encapsulation. All arguments in millimeters unless otherwise specified.
  */
@@ -32,6 +40,8 @@ public:
   void drawTriangle(Point* p1, Point* p2, Point* p3);
   // Draws a circle
   void drawCircle(Point* centre, float radius);
+  // Moves the Axis from Home to 1000 steps out - used to measure millimeters movement
+  void calibrate(Axis axis);
 
 protected:
 private:

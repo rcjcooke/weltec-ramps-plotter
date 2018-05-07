@@ -28,6 +28,8 @@ public:
   bool isHome() const;
   // True true if the axis is at it's maximum value
   bool isAtMax() const;
+  // Get the current position of this axis as measured in Steps from Home
+  long getCurrentPosition() const;
 
   /*******************************
    * Actions
@@ -36,6 +38,8 @@ public:
   void singleStep(int direction);
   // Move the stepper back to the home position
   void home();
+  // Move to a specific position / measured in steps
+  void moveTo(long position);
   // Turn the power off
   void disable();
   // Turn the power on

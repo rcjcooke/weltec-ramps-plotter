@@ -1,5 +1,15 @@
 #include "Plotter.hpp"
 
+// X Axis 30000 steps = 222mm
+// Y Axis 20000 steps = 150 mm
+
+#define PEN_LOWER_POSITION 500
+
+static const float X_RATIO = 30000/222;
+static const float Y_RATIO = 20000/150;
+
+
+
 /*******************************
  * Constructors
  *******************************/
@@ -36,6 +46,7 @@ void Plotter::drawRect(Point* origin, float length, float width) {
   // Raise pen
   // Move to origin
   // Lower pen
+  lower();
   // Move to top right corner (length)
   // Move to bottom right corner (width)
   // Move to bottom left corner (-length)
@@ -56,13 +67,35 @@ void Plotter::raise() {
 }
 
 void Plotter::lower() {
-  
-  digitalWrite(Z_STEP_PIN, HIGH);
-
+  mZAxis->moveTo(PEN_LOWER_POSITION);
 }
 
 void Plotter::move(Point* toPoint) {
 
+}
+
+void Plotter::calibrate(Axis axis) {
+  StepperAxis* stepperAxis;
+  switch (axis) {
+    case Axis::X:
+      stepperAxis = mXAxis;
+      mYAxis->moveTo(2000);
+      break;
+    case Axis::Y:
+      stepperAxis = mYAxis;
+      mXAxis->moveTo(2000);
+      break;
+    case Axis::Z:
+      stepperAxis = mZAxis;
+      break;
+    default:
+      stepperAxis = mXAxis;
+      break;
+  }
+  
+  stepperAxis->moveTo(2000);
+  delay(5000);
+  stepperAxis->moveTo(22000);
 }
 
 void Plotter::home() {

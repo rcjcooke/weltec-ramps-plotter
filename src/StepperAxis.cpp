@@ -1,7 +1,7 @@
 #include "StepperAxis.hpp"
 
 // Microseconds
-#define MIN_STEP_DELAY 500
+#define MIN_STEP_DELAY 750
 
 /*******************************
  * Constructors
@@ -44,6 +44,10 @@ bool StepperAxis::isAtMax() const {
   return mAtMax;
 }
 
+long StepperAxis::getCurrentPosition() const {
+  return mCurrentStepLocation;  
+}
+
 /*******************************
  * Actions
  *******************************/
@@ -64,22 +68,22 @@ void StepperAxis::singleStep(int direction) {
     digitalWrite(mStepPin, HIGH);
     digitalWrite(mStepPin, LOW);
     mEarliestNextStepMicros = mEarliestNextStepMicros + MIN_STEP_DELAY;
-  }
-
-  switch(direction) {
-    case Direction::TowardsHome:
-      mCurrentStepLocation--;
-      if (digitalRead(mMinPin) == HIGH) {
-        mHome = true;
-        mCurrentStepLocation = 0;
-      }
-      break;
-    case Direction::AwayFromHome:
-      mCurrentStepLocation++;
-      if (mCurrentStepLocation == mMaxSteps) {
-        mAtMax = true;
-      }
-      break;
+    
+    switch(direction) {
+      case Direction::TowardsHome:
+        mCurrentStepLocation--;
+        if (digitalRead(mMinPin) == HIGH) {
+          mHome = true;
+          mCurrentStepLocation = 0;
+        }
+        break;
+      case Direction::AwayFromHome:
+        mCurrentStepLocation++;
+        if (mCurrentStepLocation == mMaxSteps) {
+          mAtMax = true;
+        }
+        break;
+    }
   }
 }
 
@@ -95,4 +99,19 @@ void StepperAxis::enable() {
 
 void StepperAxis::disable() {
   digitalWrite(mEnablePin, HIGH);
+}
+
+void StepperAxis::moveTo(long position) {
+  enable();
+  Direction d;
+  if (mCurrentStepLocation > position) {
+    d = Direction::TowardsHome;
+  } else {
+    d = Direction::AwayFromHome;
+  }
+
+  while (mCurrentStepLocation != position) {
+    singleStep(d);
+  }
+  disable();
 }
