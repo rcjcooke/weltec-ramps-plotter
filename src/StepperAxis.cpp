@@ -6,7 +6,7 @@
 /*******************************
  * Constructors
  *******************************/  
-StepperAxis::StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int maxPin, long maxSteps, bool invertDirection) {
+StepperAxis::StepperAxis(uint8_t stepPin, uint8_t dirPin, uint8_t enablePin, uint8_t minPin, uint8_t maxPin, long maxSteps, bool invertDirection) {
   mStepPin = stepPin;
   mDirPin = dirPin;
   mEnablePin = enablePin;
@@ -67,7 +67,7 @@ void StepperAxis::singleStep(Direction direction) {
     uint8_t directionToMove = direction;
     if (mInvertDirection) {
       if (direction == HIGH) directionToMove = LOW;
-      if (direction == LOW) directionToMove = HIGH;
+      else directionToMove = HIGH;
     }
     digitalWrite(mDirPin, directionToMove);
     digitalWrite(mStepPin, HIGH);

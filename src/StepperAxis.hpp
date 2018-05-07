@@ -19,7 +19,7 @@ public:
   /*******************************
    * Constructors
    *******************************/  
-  StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int maxPin, long maxSteps, bool invertDirection);
+  StepperAxis(uint8_t stepPin, uint8_t dirPin, uint8_t enablePin, uint8_t minPin, uint8_t maxPin, long maxSteps, bool invertDirection);
 
   /*******************************
    * Accessors
