@@ -35,12 +35,14 @@ public:
   // Calculates the transform that would be required to level the bed
   void calibrateBedLevel();
   // Draws a rectangle
+  void drawRect(); // Basic implementation with hard coded step sizes
   void drawRect(Point* origin, float length, float width);
   // Draws a triangle
+  void drawTriangle(); // Basic implementation with hard coded step sizes  
   void drawTriangle(Point* p1, Point* p2, Point* p3);
   // Draws a circle
   void drawCircle(Point* centre, float radius);
-  // Moves the Axis from Home to 1000 steps out - used to measure millimeters movement
+  // Moves the Axis from Home to 2000 steps and then 22000 steps out - used to measure millimeters movement
   void calibrate(Axis axis);
 
 protected:
