@@ -53,7 +53,11 @@ void Plotter::drawRect(Point* origin, float length, float width) {
 void Plotter::drawTriangle(Point* p1, Point* p2, Point* p3) {
   mXAxis->moveTo(2000);
   mYAxis->moveTo(2000);
+  
   raiseBed();
+
+  mXAxis->enable();
+  mYAxis->enable();
   for (int i=0; i<2000; i++) {
     mXAxis->singleStep(Direction::AwayFromHome);
     mYAxis->singleStep(Direction::AwayFromHome);
@@ -65,6 +69,9 @@ void Plotter::drawTriangle(Point* p1, Point* p2, Point* p3) {
   for (int i=0; i<4000; i++) {
     mXAxis->singleStep(Direction::TowardsHome);
   }
+  mXAxis->disable();
+  mYAxis->disable();
+
   lowerBed();
 }
 
@@ -73,7 +80,7 @@ void Plotter::drawCircle(Point* centre, float radius) {
 }
 
 void Plotter::raiseBed() {
-  digitalWrite(Z_STEP_PIN, HIGH);
+  mZAxis->home();
 }
 
 void Plotter::lowerBed() {
