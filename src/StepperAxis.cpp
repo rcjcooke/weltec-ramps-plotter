@@ -51,7 +51,7 @@ long StepperAxis::getCurrentPosition() const {
 /*******************************
  * Actions
  *******************************/
-void StepperAxis::singleStep(int direction) {
+void StepperAxis::singleStep(Direction direction) {
   // Wait until the earliest time we can next step
   while (micros() < mEarliestNextStepMicros) {}
 
@@ -64,7 +64,12 @@ void StepperAxis::singleStep(int direction) {
   }
 
   if (okToMove) {
-    digitalWrite(mDirPin, mInvertDirection ? !direction : direction);
+    uint8_t directionToMove = direction;
+    if (mInvertDirection) {
+      if (direction == HIGH) directionToMove = LOW;
+      if (direction == LOW) directionToMove = HIGH;
+    }
+    digitalWrite(mDirPin, directionToMove);
     digitalWrite(mStepPin, HIGH);
     digitalWrite(mStepPin, LOW);
     mEarliestNextStepMicros = mEarliestNextStepMicros + MIN_STEP_DELAY;

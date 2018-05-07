@@ -35,7 +35,7 @@ public:
    * Actions
    *******************************/
   // Single step
-  void singleStep(int direction);
+  void singleStep(Direction direction);
   // Move the stepper back to the home position
   void home();
   // Move to a specific position / measured in steps
