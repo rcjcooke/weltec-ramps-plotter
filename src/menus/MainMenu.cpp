@@ -19,12 +19,14 @@ void MainMenu::printMenu() {
   Serial << "  Choice (number followed by enter): ";
 }
 
-SerialDisplayMenu* MainMenu::processUserInput(long userInput) {
+SerialDisplayMenu* MainMenu::processUserInput(String userInput) {
   
   SerialDisplayMenu* returnMenu = this;
-  if (userInput == 1) {
-  } else if (userInput == 2) {
-  } else if (userInput == 3) {
+  if (userInput.equals("1")) {
+    displayError("Not implemented yet");
+  } else if (userInput.equals("2")) {
+    displayError("Not implemented yet");
+  } else if (userInput.equals("3")) {
     returnMenu = new DrawMenu(getSerialDisplayMenuConfiguration(), this, mPlotter);
   } else {
     displayError("Please pick either 1, 2 or 3. You entered " + String(userInput));

@@ -15,7 +15,7 @@ public:
    * Actions
    *******************************/
   // Processes user input
-  SerialDisplayMenu* processUserInput(long userInput);
+  SerialDisplayMenu* processUserInput(String userInput);
 
 protected:
   /*******************************

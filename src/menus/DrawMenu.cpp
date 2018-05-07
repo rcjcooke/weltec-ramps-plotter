@@ -21,20 +21,18 @@ void DrawMenu::printMenu() {
   Serial << "  Choice (number followed by enter): ";
 }
 
-SerialDisplayMenu* DrawMenu::processUserInput(long userInput) {
+SerialDisplayMenu* DrawMenu::processUserInput(String userInput) {
   
   SerialDisplayMenu* returnMenu = this;
-  if (userInput == 1) {
+  if (userInput.equals("1")) {
     mPlotter->drawRect();
-    returnMenu = this;
-  } else if (userInput == 2) {
+  } else if (userInput.equals("2")) {
     mPlotter->drawTriangle();
-    returnMenu = this;
-  } else if (userInput == 3) {
-    returnMenu = this;
-  } else if (userInput == 4) {
-    returnMenu = this;
-  } else if (userInput == 5) {
+  } else if (userInput.equals("3")) {
+    displayError("Not implemented yet");
+  } else if (userInput.equals("4")) {
+    displayError("Not implemented yet");
+  } else if (userInput.equals("5")) {
     returnMenu = mOrigin;
   } else {
     displayError("Please pick either 1, 2, 3, 4 or 5. You entered " + String(userInput));

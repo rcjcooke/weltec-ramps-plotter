@@ -104,7 +104,7 @@ void SerialDisplayMenu::updateStatusLine(String statusLine) {
 }
 
 // Processes some raw input and updates the value
-bool handleRawSerialInput(long &inputValue) {
+bool handleRawSerialInput(String &inputValue) {
 
   bool terminated = false;
   // Process input - waiting for the terminator (enter key)
@@ -120,18 +120,18 @@ bool handleRawSerialInput(long &inputValue) {
 
     if (input == '\r') {
       terminated = true;
+    } else if (input == '\b') {
+      inputValue.remove(inputValue.length()-1, 1);
     } else {
-      // Cheat convert ASCII to decimal
-      input = input - 48;
-      inputValue = inputValue*10 + input;
+      inputValue = inputValue + input;
     }
   }
   return terminated;
 }
 
 // Get user input while letting the menu take care of display updates etc.
-long SerialDisplayMenu::getUserInputWhileKeepingStatusUpdated() {
-  long inputValue=0;
+String SerialDisplayMenu::getUserInputWhileKeepingStatusUpdated() {
+  String inputValue="";
   bool terminated = false;
 
   while (!terminated) {
@@ -166,7 +166,7 @@ void SerialDisplayMenu::userInputLoop(SerialDisplayMenu* startingMenu) {
     currentMenu->display();
 
     // Get user input while letting the menu take care of display updates etc.
-    long inputValue = currentMenu->getUserInputWhileKeepingStatusUpdated();
+    String inputValue = currentMenu->getUserInputWhileKeepingStatusUpdated();
 
     // Process the fully formed user input
     SerialDisplayMenu* newMenu = currentMenu->processUserInput(inputValue);
