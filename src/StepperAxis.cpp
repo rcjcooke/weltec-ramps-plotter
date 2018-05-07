@@ -29,8 +29,8 @@ StepperAxis::StepperAxis(int stepPin, int dirPin, int enablePin, int minPin, int
   pinMode(mMinPin, INPUT_PULLUP);
   pinMode(mMaxPin, INPUT_PULLUP);
 
-  // Power it up
-  enable();
+  // Disable power to safeguard from thermal overload
+  disable();
 }
 
 /*******************************

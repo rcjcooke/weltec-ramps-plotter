@@ -8,8 +8,6 @@
 static const float X_RATIO = 30000/222;
 static const float Y_RATIO = 20000/150;
 
-
-
 /*******************************
  * Constructors
  *******************************/
@@ -20,11 +18,9 @@ Plotter::Plotter() {
   mZAxis = new StepperAxis(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 500000, true);
   // Home everything
   home();
+  // Lower the bed away from the pen
+  lowerBed();
 
-  // Turn the stepper motor power offto avoid thermal overload
-  mXAxis->disable();
-  mYAxis->disable();
-  mZAxis->disable();
 }
 
 Plotter::~Plotter() {
@@ -45,8 +41,8 @@ void Plotter::drawRect(Point* origin, float length, float width) {
   // TODO: Add range error checking
   // Raise pen
   // Move to origin
-  // Lower pen
-  lower();
+  // Raise Bed to pen
+  raiseBed();
   // Move to top right corner (length)
   // Move to bottom right corner (width)
   // Move to bottom left corner (-length)
@@ -55,18 +51,32 @@ void Plotter::drawRect(Point* origin, float length, float width) {
 }
 
 void Plotter::drawTriangle(Point* p1, Point* p2, Point* p3) {
-
+  mXAxis->moveTo(2000);
+  mYAxis->moveTo(2000);
+  raiseBed();
+  for (int i=0; i<2000; i++) {
+    mXAxis->singleStep(Direction::AwayFromHome);
+    mYAxis->singleStep(Direction::AwayFromHome);
+  }
+  for (int i=0; i<2000; i++) {
+    mXAxis->singleStep(Direction::TowardsHome);
+    mYAxis->singleStep(Direction::AwayFromHome);
+  }
+  for (int i=0; i<4000; i++) {
+    mXAxis->singleStep(Direction::TowardsHome);
+  }
+  lowerBed();
 }
 
 void Plotter::drawCircle(Point* centre, float radius) {
 
 }
 
-void Plotter::raise() {
+void Plotter::raiseBed() {
   digitalWrite(Z_STEP_PIN, HIGH);
 }
 
-void Plotter::lower() {
+void Plotter::lowerBed() {
   mZAxis->moveTo(PEN_LOWER_POSITION);
 }
 
@@ -99,9 +109,15 @@ void Plotter::calibrate(Axis axis) {
 }
 
 void Plotter::home() {
+  mXAxis->enable();
+  mYAxis->enable();
+  mZAxis->enable();
   while (!(mXAxis->isHome() && mYAxis->isHome() && mZAxis->isHome())) {
     mXAxis->singleStep(Direction::TowardsHome);
     mYAxis->singleStep(Direction::TowardsHome);
     mZAxis->singleStep(Direction::TowardsHome);
   }
+  mXAxis->disable();
+  mYAxis->disable();
+  mZAxis->disable();
 }

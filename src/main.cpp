@@ -7,7 +7,8 @@ Plotter* mPlotter;
 void setup() {
   // Creates Plotter controller and homes it
   mPlotter = new Plotter();
-  mPlotter->calibrate(Axis::Z);
+  Point* p = new Point(0,0);
+  mPlotter->drawTriangle(p, p, p);
 }
 
 void loop() {
