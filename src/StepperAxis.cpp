@@ -80,12 +80,16 @@ void StepperAxis::singleStep(Direction direction) {
         if (digitalRead(mMinPin) == HIGH) {
           mHome = true;
           mCurrentStepLocation = 0;
+        } else {
+          mHome = false;
         }
         break;
       case Direction::AwayFromHome:
         mCurrentStepLocation++;
         if (mCurrentStepLocation == mMaxSteps) {
           mAtMax = true;
+        } else {
+          mAtMax = false;
         }
         break;
     }
