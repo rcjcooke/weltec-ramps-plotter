@@ -64,34 +64,40 @@ void StepperAxis::singleStep(Direction direction) {
   }
 
   if (okToMove) {
+    // Make sure we've got the right direction (some axes are inverted)
     uint8_t directionToMove = direction;
     if (mInvertDirection) {
       if (direction == HIGH) directionToMove = LOW;
       else directionToMove = HIGH;
     }
+    // You gotta move it, move it
     digitalWrite(mDirPin, directionToMove);
     digitalWrite(mStepPin, HIGH);
     digitalWrite(mStepPin, LOW);
+    // Make sure we don't move too quickly next time
     mEarliestNextStepMicros = mEarliestNextStepMicros + MIN_STEP_DELAY;
     
+    // Update location
     switch(direction) {
       case Direction::TowardsHome:
         mCurrentStepLocation--;
-        if (digitalRead(mMinPin) == HIGH) {
-          mHome = true;
-          mCurrentStepLocation = 0;
-        } else {
-          mHome = false;
-        }
         break;
       case Direction::AwayFromHome:
         mCurrentStepLocation++;
-        if (mCurrentStepLocation == mMaxSteps) {
-          mAtMax = true;
-        } else {
-          mAtMax = false;
-        }
         break;
+    }
+
+    // Check axis limits
+    if (digitalRead(mMinPin) == HIGH) {
+      mCurrentStepLocation = 0;
+      mHome = true;
+      mAtMax = false;
+    } else if (mCurrentStepLocation == mMaxSteps) {
+      mHome = false;
+      mAtMax = true;
+    } else {
+      mHome = false;
+      mAtMax = false;
     }
   }
 }
