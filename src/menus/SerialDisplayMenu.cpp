@@ -123,7 +123,7 @@ bool handleRawSerialInput(String &inputValue) {
     } else if (input == '\b') {
       inputValue.remove(inputValue.length()-1, 1);
     } else {
-      inputValue = inputValue + input;
+      inputValue.concat((char) input);
     }
   }
   return terminated;
@@ -143,12 +143,14 @@ String SerialDisplayMenu::getUserInputWhileKeepingStatusUpdated() {
       controllerUpdate();
 
       // Update the status every now and then
-      if (i % (mConfigurationPtr->getUserStatusUpdateFrequencyModulus()) == 0) {
-        // Update the user
-        String statusLine = constructStatusLine();
-        updateStatusLine(statusLine);
+      if (mConfigurationPtr->getDisplayStatusLine()) {
+        if (i % (mConfigurationPtr->getUserStatusUpdateFrequencyModulus()) == 0) {
+          // Update the user
+          String statusLine = constructStatusLine();
+          updateStatusLine(statusLine);
+        }
+        i++;
       }
-      i++;
     }
 
     // Process the new buffer content and update the inputValue with it

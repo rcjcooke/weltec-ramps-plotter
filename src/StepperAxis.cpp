@@ -1,12 +1,13 @@
 #include "StepperAxis.hpp"
 
 // Microseconds
-#define MIN_STEP_DELAY 750
+#define MIN_HALF_STEP_DELAY 100
 
 /*******************************
  * Constructors
  *******************************/  
-StepperAxis::StepperAxis(uint8_t stepPin, uint8_t dirPin, uint8_t enablePin, uint8_t minPin, uint8_t maxPin, long maxSteps, bool invertDirection) {
+StepperAxis::StepperAxis(String id, uint8_t stepPin, uint8_t dirPin, uint8_t enablePin, uint8_t minPin, uint8_t maxPin, long maxSteps, bool invertDirection) {
+  mId = id;
   mStepPin = stepPin;
   mDirPin = dirPin;
   mEnablePin = enablePin;
@@ -15,7 +16,7 @@ StepperAxis::StepperAxis(uint8_t stepPin, uint8_t dirPin, uint8_t enablePin, uin
   mMaxSteps = maxSteps;
   mInvertDirection = invertDirection;
 
-  mEarliestNextStepMicros = micros();
+  mEarliestNextHalfStepMicros = micros();
   mCurrentStepLocation = 0;
   mHome = false;
   mAtMax = false;
@@ -51,9 +52,22 @@ long StepperAxis::getCurrentPosition() const {
 /*******************************
  * Actions
  *******************************/
+String directionToString(Direction direction) {
+  switch (direction) {
+    case Direction::AwayFromHome: return "AwayFromHome";
+    case Direction::TowardsHome: return "TowardsHome";
+    default: return "IllegalDirection";
+  }
+}
+
+String StepperAxis::toString() {
+  return mId + "@" + String(mCurrentStepLocation) + (mHome ? "@H" : "") + (mAtMax ? "@M" : "");
+}
+
 void StepperAxis::singleStep(Direction direction) {
+  if (DEBUG) Serial.println(this->toString() + ": Single Step " + directionToString(direction));
   // Wait until the earliest time we can next step
-  while (micros() < mEarliestNextStepMicros) {}
+  while (micros() < mEarliestNextHalfStepMicros) {}
 
   // Make sure we don't overshoot the end of the axis
   bool okToMove = false;
@@ -61,21 +75,25 @@ void StepperAxis::singleStep(Direction direction) {
     okToMove = true;
   } else if (direction == Direction::AwayFromHome && !isAtMax()) {
     okToMove = true;
+  } else {
+    if (DEBUG) Serial.println(this->toString() + ": Single Step NOT OK TO MOVE " + directionToString(direction));    
   }
 
   if (okToMove) {
     // Make sure we've got the right direction (some axes are inverted)
-    uint8_t directionToMove = direction;
+    Direction directionToMove = direction;
     if (mInvertDirection) {
-      if (direction == HIGH) directionToMove = LOW;
-      else directionToMove = HIGH;
+      if (direction == Direction::AwayFromHome) directionToMove = Direction::TowardsHome;
+      else directionToMove = Direction::AwayFromHome;
     }
     // You gotta move it, move it
-    digitalWrite(mDirPin, directionToMove);
+    digitalWrite(mDirPin, static_cast<uint8_t>(directionToMove));
     digitalWrite(mStepPin, HIGH);
+    mEarliestNextHalfStepMicros = micros() + MIN_HALF_STEP_DELAY;
+    while (micros() < mEarliestNextHalfStepMicros) {}
     digitalWrite(mStepPin, LOW);
     // Make sure we don't move too quickly next time
-    mEarliestNextStepMicros = mEarliestNextStepMicros + MIN_STEP_DELAY;
+    mEarliestNextHalfStepMicros = micros() + MIN_HALF_STEP_DELAY;
     
     // Update location
     switch(direction) {
@@ -89,22 +107,30 @@ void StepperAxis::singleStep(Direction direction) {
 
     // Check axis limits
     if (digitalRead(mMinPin) == HIGH) {
-      mCurrentStepLocation = 0;
-      mHome = true;
+      // Only reset this value if we're moving in this direction, otherwise we just haven't left the switch yet
+      if (direction == Direction::TowardsHome) {
+        if (VERBOSE) Serial.println(this->toString() + ": Reached Home moving TowardsHome");
+        mCurrentStepLocation = 0;
+        mHome = true;
+      } else {
+        // We've just stepped away from home - it's just that the switch happens to be engaged still
+        mHome = false;
+      }
       mAtMax = false;
     } else if (mCurrentStepLocation == mMaxSteps) {
+      if (VERBOSE) Serial.println(this->toString() + ": Reached Max moving " + directionToString(direction));
       mHome = false;
       mAtMax = true;
     } else {
       mHome = false;
       mAtMax = false;
-    }
+    }    
   }
 }
 
 void StepperAxis::home() {
-    while (!isHome()) {
-      singleStep(Direction::TowardsHome);
+  while (!isHome()) {
+    singleStep(Direction::TowardsHome);
   }
 }
 
@@ -117,6 +143,7 @@ void StepperAxis::disable() {
 }
 
 void StepperAxis::moveTo(long position) {
+
   enable();
   Direction d;
   if (mCurrentStepLocation > position) {
@@ -125,8 +152,12 @@ void StepperAxis::moveTo(long position) {
     d = Direction::AwayFromHome;
   }
 
+  if (VERBOSE) Serial.println(this->toString() + ": Move to: " + String(position) + " " + directionToString(d));
+
   while (mCurrentStepLocation != position) {
     singleStep(d);
   }
+  if (VERBOSE) Serial.println(this->toString() + ": Move to: Reached required position");
+
   disable();
 }

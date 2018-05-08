@@ -5,10 +5,12 @@
 //#include <Eigen>
 #include "Point.hpp"
 #include "RAMPSController.hpp"
+#include "Logging.hpp"
 
-enum Direction : uint8_t {
-  TowardsHome=HIGH,
-  AwayFromHome=LOW
+
+enum class Direction : uint8_t {
+  AwayFromHome=0x0,
+  TowardsHome=0x1
 };
 
 /**
@@ -19,7 +21,7 @@ public:
   /*******************************
    * Constructors
    *******************************/  
-  StepperAxis(uint8_t stepPin, uint8_t dirPin, uint8_t enablePin, uint8_t minPin, uint8_t maxPin, long maxSteps, bool invertDirection);
+  StepperAxis(String id, uint8_t stepPin, uint8_t dirPin, uint8_t enablePin, uint8_t minPin, uint8_t maxPin, long maxSteps, bool invertDirection);
 
   /*******************************
    * Accessors
@@ -30,6 +32,8 @@ public:
   bool isAtMax() const;
   // Get the current position of this axis as measured in Steps from Home
   long getCurrentPosition() const;
+  // Returns a string representation identifying this Stepper Axis
+  String toString();
 
   /*******************************
    * Actions
@@ -54,6 +58,9 @@ private:
   /*******************************
    * Member variables (fields)
    *******************************/
+  // A Unique identifier for this axis to refer to it in logging
+  String mId;
+
   // Arduino Step Pin for Motor
   uint8_t mStepPin;
   uint8_t mDirPin;
@@ -65,7 +72,7 @@ private:
 
   bool mAtMax;
   bool mHome;
-  unsigned long mEarliestNextStepMicros;
+  unsigned long mEarliestNextHalfStepMicros;
 
   long mCurrentStepLocation;
 };
