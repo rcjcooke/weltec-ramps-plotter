@@ -50,17 +50,23 @@ void Plotter::drawRect() {
   // Raise pen
 }
 
-void Plotter::drawRect(Point* origin, float length, float width) {
+void Plotter::drawRect(Point* origin, Point* length, Point* width) {
   // TODO: Add range error checking
   // Raise pen
-  // Move to origin
+   // Move to origin
+moveTo(origin);
   // Raise Bed to pen
   raiseBed();
   // Move to top right corner (length)
+  moveTo(length);
   // Move to bottom right corner (width)
+  moveTo(width);
   // Move to bottom left corner (-length)
+  moveTo(Point-length);
   // Move to top left corner (-width)
+  moveTo(Point-width);
   // Raise pen
+  lowerBed();
 }
 
 void Plotter::drawTriangle(Point* p1, Point* p2, Point* p3) {
