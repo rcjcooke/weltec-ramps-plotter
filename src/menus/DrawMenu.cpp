@@ -1,4 +1,5 @@
 #include "DrawMenu.hpp"
+#include "DrawTriangleMenu.hpp"
 
 /*******************************
  * Constructors
@@ -27,7 +28,7 @@ SerialDisplayMenu* DrawMenu::processUserInput(String userInput) {
   if (userInput.equals("1")) {
     mPlotter->drawRect();
   } else if (userInput.equals("2")) {
-    mPlotter->drawTriangle();
+    returnMenu = new DrawTriangleMenu(getSerialDisplayMenuConfiguration(), this, mPlotter);
   } else if (userInput.equals("3")) {
     displayError("Not implemented yet");
   } else if (userInput.equals("4")) {
