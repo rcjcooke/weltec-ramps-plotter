@@ -41,6 +41,7 @@ public:
   void drawTriangle(); // Basic implementation with hard coded step sizes  
   void drawTriangle(Point* p1, Point* p2, Point* p3);
   // Draws a circle
+  void drawCircle(); // Basic implementation with hard coded step sizes
   void drawCircle(Point* centre, float radius);
   // Moves the Axis from Home to 2000 steps and then 22000 steps out - used to measure millimeters movement
   void calibrate(Axis axis);
@@ -54,8 +55,8 @@ private:
   void raiseBed();
   // Lower the bed away from the pen
   void lowerBed();
-  // Move the pen from it's current location to the specified point
-  void move(Point* toPoint);
+  // Move the pen from it's current location to the specified point - in a straight line
+  void moveTo(Point* toPoint);
   // Move the pen to the home position
   void home();
 

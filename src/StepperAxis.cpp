@@ -144,7 +144,8 @@ void StepperAxis::disable() {
 
 void StepperAxis::moveTo(long position) {
 
-  enable();
+  if (mCurrentStepLocation == position) return;
+  
   Direction d;
   if (mCurrentStepLocation > position) {
     d = Direction::TowardsHome;
@@ -154,10 +155,12 @@ void StepperAxis::moveTo(long position) {
 
   if (VERBOSE) Serial.println(this->toString() + ": Move to: " + String(position) + " " + directionToString(d));
 
+  enable();
   while (mCurrentStepLocation != position) {
     singleStep(d);
   }
+  disable();
+
   if (VERBOSE) Serial.println(this->toString() + ": Move to: Reached required position");
 
-  disable();
 }

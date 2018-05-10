@@ -1,12 +1,12 @@
 #include "Plotter.hpp"
+#include "Kinematics.hpp"
 
 // X Axis 30000 steps = 222mm
 // Y Axis 20000 steps = 150 mm
 
 #define PEN_LOWER_POSITION 5000
 
-static const float X_RATIO = 30000/222;
-static const float Y_RATIO = 20000/150;
+
 
 /*******************************
  * Constructors
@@ -64,7 +64,12 @@ void Plotter::drawRect(Point* origin, float length, float width) {
 }
 
 void Plotter::drawTriangle(Point* p1, Point* p2, Point* p3) {
-
+  moveTo(p1);
+  raiseBed();
+  moveTo(p2);
+  moveTo(p3);
+  moveTo(p1);
+  lowerBed();
 }
 
 void Plotter::drawTriangle() {
@@ -96,6 +101,23 @@ void Plotter::drawCircle(Point* centre, float radius) {
 
 }
 
+void Plotter::drawCircle() {
+  // Start on the circumference of the circle
+  mXAxis->moveTo(5000);
+  mYAxis->moveTo(10000);
+
+  // (x – h)^2 + (y – k)^2 = r^2
+  
+  // Centre at 10000, 10000
+  Point* centreOffset = new Point(10000, 10000);
+  float radius = 5000;
+  // Circle with a radus of 5000 steps
+  long x = 0;
+  while (true) {
+    
+  }
+}
+
 void Plotter::raiseBed() {
   mZAxis->enable();
   mZAxis->home();
@@ -107,8 +129,36 @@ void Plotter::lowerBed() {
   mZAxis->moveTo(PEN_LOWER_POSITION);
 }
 
-void Plotter::move(Point* toPoint) {
+void Plotter::moveTo(Point* toPoint) {
+  // Current location
+  Point* stepsHere = new Point(mXAxis->getCurrentPosition(), mYAxis->getCurrentPosition());
+  Point* stepsThere = Kinematics::mm2Steps(toPoint);
 
+  long deltaX = stepsThere->x - stepsHere->x;
+  long deltaY = stepsThere->y - stepsHere->y;
+
+  if (deltaX == 0 && deltaY == 0) {
+    // We're already where we want to be
+    return;
+  } else if (deltaX == 0) {
+    // It's a straight line along the Y Axis
+    mYAxis->moveTo(stepsThere->y);
+  } else if (deltaY == 0) {
+    // It's a straight line along the X Axis
+    mXAxis->moveTo(stepsThere->x);
+  } else {
+    // It's a diagonal line so we need to break it down
+    // y = mx+b
+    float m = (deltaY) / (deltaX);
+    float b = stepsHere->y - m * stepsHere->x;
+
+    long xinc = 1/m;
+    for (long x = stepsHere->x; x <= stepsThere->x; x = x + xinc) {
+      mXAxis->moveTo(x);
+      long y2 = m*(x+1) + b;
+      mYAxis->moveTo(y2);
+    }
+  }
 }
 
 void Plotter::calibrate(Axis axis) {
@@ -116,10 +166,12 @@ void Plotter::calibrate(Axis axis) {
   switch (axis) {
     case Axis::X:
       stepperAxis = mXAxis;
+      // Move on to the paper
       mYAxis->moveTo(2000);
       break;
     case Axis::Y:
       stepperAxis = mYAxis;
+      // Move on to the paper
       mXAxis->moveTo(2000);
       break;
     case Axis::Z:
