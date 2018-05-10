@@ -62,9 +62,9 @@ moveTo(origin);
   // Move to bottom right corner (width)
   moveTo(width);
   // Move to bottom left corner (-length)
-  moveTo(Point-length);
+  moveTo(Point- length);
   // Move to top left corner (-width)
-  moveTo(Point-width);
+  moveTo(Point- width);
   // Raise pen
   lowerBed();
 }
