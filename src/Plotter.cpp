@@ -102,20 +102,20 @@ void Plotter::drawCircle(Point* centre, float radius) {
 }
 
 void Plotter::drawCircle() {
-  // Start on the circumference of the circle
-  mXAxis->moveTo(5000);
-  mYAxis->moveTo(10000);
+  // // Start on the circumference of the circle
+  // mXAxis->moveTo(5000);
+  // mYAxis->moveTo(10000);
 
-  // (x – h)^2 + (y – k)^2 = r^2
+  // // (x – h)^2 + (y – k)^2 = r^2
   
-  // Centre at 10000, 10000
-  Point* centreOffset = new Point(10000, 10000);
-  float radius = 5000;
-  // Circle with a radus of 5000 steps
-  long x = 0;
-  while (true) {
+  // // Centre at 10000, 10000
+  // Point* centreOffset = new Point(10000, 10000);
+  // float radius = 5000;
+  // // Circle with a radus of 5000 steps
+  // long x = 0;
+  // while (true) {
     
-  }
+  // }
 }
 
 void Plotter::raiseBed() {
@@ -134,26 +134,26 @@ void Plotter::moveTo(Point* toPoint) {
   Point* stepsHere = new Point(mXAxis->getCurrentPosition(), mYAxis->getCurrentPosition());
   Point* stepsThere = Kinematics::mm2Steps(toPoint);
 
-  long deltaX = stepsThere->x - stepsHere->x;
-  long deltaY = stepsThere->y - stepsHere->y;
+  long deltaX = stepsThere->x() - stepsHere->x();
+  long deltaY = stepsThere->y() - stepsHere->y();
 
   if (deltaX == 0 && deltaY == 0) {
     // We're already where we want to be
     return;
   } else if (deltaX == 0) {
     // It's a straight line along the Y Axis
-    mYAxis->moveTo(stepsThere->y);
+    mYAxis->moveTo(stepsThere->y());
   } else if (deltaY == 0) {
     // It's a straight line along the X Axis
-    mXAxis->moveTo(stepsThere->x);
+    mXAxis->moveTo(stepsThere->x());
   } else {
     // It's a diagonal line so we need to break it down
     // y = mx+b
     float m = (deltaY) / (deltaX);
-    float b = stepsHere->y - m * stepsHere->x;
+    float b = stepsHere->y() - m * stepsHere->x();
 
     long xinc = 1/m;
-    for (long x = stepsHere->x; x <= stepsThere->x; x = x + xinc) {
+    for (long x = stepsHere->x(); x <= stepsThere->x(); x = x + xinc) {
       mXAxis->moveTo(x);
       long y2 = m*(x+1) + b;
       mYAxis->moveTo(y2);
