@@ -1,6 +1,8 @@
 #ifndef __POINT_H_INCLUDED__
 #define __POINT_H_INCLUDED__
 
+#include <Arduino.h>
+
 /**
  * Encapsulation of an immuteable 2D Point
  */
@@ -13,6 +15,8 @@ public:
   float y() const;
 
   Point* translate(float x, float y);
+
+  String toString();
 
 private:
   float mX;

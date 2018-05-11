@@ -15,13 +15,13 @@ DrawTriangleMenu::DrawTriangleMenu(SerialDisplayMenuConfiguration* configuration
 void DrawTriangleMenu::printMenu() {
   switch (mCurrentStage) {
     case 0:
-      Serial << "  Type in point 1 in the form x,y in mm measured from home [20,20]: ";
+      Serial << "  Type in point 1 in the form x,y in mm measured from home [30,30]: ";
       break;
     case 1:
-      Serial << "  Type in point 2 in the form x,y in mm measured from home [40,50]: ";
+      Serial << "  Type in point 2 in the form x,y in mm measured from home [50,70]: ";
       break;
     case 2:
-      Serial << "  Type in point 3 in the form x,y in mm measured from home [30,35]: ";
+      Serial << "  Type in point 3 in the form x,y in mm measured from home [46,90]: ";
       break;
   }
 }
@@ -34,9 +34,9 @@ SerialDisplayMenu* DrawTriangleMenu::processUserInput(String userInput) {
   if (userInput.equals("")) {
     // Handle the defaults
     switch (mCurrentStage) {
-      case 0: p = new Point(20,20); break;
-      case 1: p = new Point(40,50); break;
-      case 2: p = new Point(30,35); break;
+      case 0: p = new Point(30,30); break;
+      case 1: p = new Point(50,70); break;
+      case 2: p = new Point(46,90); break;
     }
   } else {
     // Convert what the user has written in to a Point

@@ -44,6 +44,12 @@ public:
   void home();
   // Move to a specific position / measured in steps
   void moveTo(long position);
+  /** 
+   * Move to a specific position / measured in steps - powerOnOff false meanss
+   * power will not be changed on the stepper which means it needs to be handled
+   * externally to this function call.
+   */
+  void moveTo(long position, bool powerOnOff);
   // Turn the power off
   void disable();
   // Turn the power on

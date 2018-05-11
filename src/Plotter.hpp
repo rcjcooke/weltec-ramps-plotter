@@ -45,7 +45,9 @@ public:
   void drawCircle(Point* centre, float radius);
   // Moves the Axis from Home to 2000 steps and then 22000 steps out - used to measure millimeters movement
   void calibrate(Axis axis);
-
+  // Move the pen from it's current location to the specified point - in a straight line
+  void moveTo(Point* toPoint);
+  
 protected:
 private:
   /*******************************
@@ -55,8 +57,7 @@ private:
   void raiseBed();
   // Lower the bed away from the pen
   void lowerBed();
-  // Move the pen from it's current location to the specified point - in a straight line
-  void moveTo(Point* toPoint);
+
   // Move the pen to the home position
   void home();
 

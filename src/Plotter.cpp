@@ -50,21 +50,24 @@ void Plotter::drawRect() {
   // Raise pen
 }
 
-void Plotter::drawRect(Point* origin, Point* length, Point* width) {
+void Plotter::drawRect(Point* origin, float length, float width) {
+  Point* p2 = new Point(origin->x() + length, origin->y());
+  Point* p3 = new Point(origin->x() + length, origin->y() + width);
+  Point* p4 = new Point(origin->x(), origin->y()  + width);
   // TODO: Add range error checking
   // Raise pen
    // Move to origin
-moveTo(origin);
+  moveTo(origin);
   // Raise Bed to pen
   raiseBed();
   // Move to top right corner (length)
-  moveTo(length);
+  moveTo(p2);
   // Move to bottom right corner (width)
-  moveTo(width);
+  moveTo(p3);
   // Move to bottom left corner (-length)
-  moveTo(Point- length);
+  moveTo(p4);
   // Move to top left corner (-width)
-  moveTo(Point- width);
+  moveTo(origin);
   // Raise pen
   lowerBed();
 }
@@ -125,6 +128,7 @@ void Plotter::drawCircle() {
 }
 
 void Plotter::raiseBed() {
+  if (VERBOSE) Serial.println("Raising Bed");
   mZAxis->enable();
   mZAxis->home();
   mZAxis->disable();
@@ -136,12 +140,21 @@ void Plotter::lowerBed() {
 }
 
 void Plotter::moveTo(Point* toPoint) {
+  if (VERBOSE) Serial.println("Move to " + toPoint->toString());
+
   // Current location
   Point* stepsHere = new Point(mXAxis->getCurrentPosition(), mYAxis->getCurrentPosition());
   Point* stepsThere = Kinematics::mm2Steps(toPoint);
 
   long deltaX = stepsThere->x() - stepsHere->x();
   long deltaY = stepsThere->y() - stepsHere->y();
+
+  if (VERBOSE) {
+    Serial.println("MoveTo: Axes: " + mXAxis->toString() + "," + mYAxis->toString());
+    Serial.println("MoveTo: Current: " + String(stepsHere->x()) + "," + String(stepsHere->y()));
+    Serial.println("MoveTo: Target: " + String(stepsThere->x()) + "," + String(stepsThere->y()));
+    Serial.println("MoveTo: DeltaX: dx=" + String(deltaX) + ", dy=" + String(deltaY));
+  }
 
   if (deltaX == 0 && deltaY == 0) {
     // We're already where we want to be
@@ -155,16 +168,37 @@ void Plotter::moveTo(Point* toPoint) {
   } else {
     // It's a diagonal line so we need to break it down
     // y = mx+b
-    float m = (deltaY) / (deltaX);
+    float m = (float) deltaY / (float) deltaX;
     float b = stepsHere->y() - m * stepsHere->x();
 
-    long xinc = 1/m;
-    for (long x = stepsHere->x(); x <= stepsThere->x(); x = x + xinc) {
-      mXAxis->moveTo(x);
-      long y2 = m*(x+1) + b;
-      mYAxis->moveTo(y2);
+    // Work out the increment we need in X to get a single step increment in Y
+    // And make sure it's going the right way!
+    float xinc = 1/m * (deltaX > 0 ? 1 : -1);
+
+    float fincrements = (stepsThere->x() - stepsHere->x()) / xinc;
+    long incs = fincrements;
+    float x = stepsHere->x();
+
+    if (VERBOSE) {
+      Serial.println("MoveTo: DL: m=" + String(m) + " b=" + String(b) + " xinc=" + String(xinc));
+      Serial.println("MoveTo: DL: fincrements=" + String(fincrements) + " incs=" + String(incs));
     }
+  
+    mXAxis->enable();
+    mYAxis->enable();
+
+    for (long i=0; i<incs; i++) {
+      if (VERBOSE) Serial.println("MoveTo: x: " + String(x));
+      mXAxis->moveTo(x, false);
+      float y2 = m*(x+xinc) + b;
+      if (VERBOSE) Serial.println("MoveTo: y: " + String(y2));
+      mYAxis->moveTo(y2, false);
+      x = x + xinc;
+    }
+    mXAxis->disable();
+    mYAxis->disable();
   }
+  if (VERBOSE) Serial.println("MoveTo: Final Axes: " + mXAxis->toString() + "," + mYAxis->toString());  
 }
 
 void Plotter::calibrate(Axis axis) {
