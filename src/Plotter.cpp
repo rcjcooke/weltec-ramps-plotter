@@ -188,10 +188,10 @@ void Plotter::moveTo(Point* toPoint) {
     mYAxis->enable();
 
     for (long i=0; i<incs; i++) {
-      if (VERBOSE) Serial.println("MoveTo: x: " + String(x));
+      if (DEBUG) Serial.println("MoveTo: x: " + String(x));
       mXAxis->moveTo(x, false);
       float y2 = m*(x+xinc) + b;
-      if (VERBOSE) Serial.println("MoveTo: y: " + String(y2));
+      if (DEBUG) Serial.println("MoveTo: y: " + String(y2));
       mYAxis->moveTo(y2, false);
       x = x + xinc;
     }
