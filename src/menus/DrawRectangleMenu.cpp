@@ -30,7 +30,6 @@ SerialDisplayMenu* DrawRectangleMenu::processUserInput(String userInput) {
   
   SerialDisplayMenu* returnMenu = this;
 
-  Point* p;
   if (userInput.equals("")) {
     // Handle the defaults
     switch (mCurrentStage) {
@@ -39,10 +38,11 @@ SerialDisplayMenu* DrawRectangleMenu::processUserInput(String userInput) {
       case 2: mWidth = 40; break;
     }
   } else {
+    int commaIdx;
     switch (mCurrentStage) {
       case 0: 
         // Convert what the user has written in to a Point
-        int commaIdx = userInput.indexOf(',');
+        commaIdx = userInput.indexOf(',');
         if (commaIdx == -1) {
           displayError("The value must be blank to accept the default, or x,y. You entered: " + userInput);
           return returnMenu;
