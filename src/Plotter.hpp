@@ -5,7 +5,6 @@
 //#include <Eigen>
 //#include "queue.h"
 
-//#include "TimeInstruction.hpp"
 #include "Point.hpp"
 #include "RAMPSController.hpp"
 #include "StepperAxis.hpp"
@@ -35,7 +34,6 @@ public:
   // Calculates the transform that would be required to level the bed
   void calibrateBedLevel();
   // Draws a rectangle
-  void drawRect(); // Basic implementation with hard coded step sizes
   void drawRect(Point* origin, float length, float width);
   // Draws a triangle
   void drawTriangle(); // Basic implementation with hard coded step sizes  

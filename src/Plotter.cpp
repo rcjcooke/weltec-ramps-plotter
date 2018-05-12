@@ -35,21 +35,6 @@ void Plotter::calibrateBedLevel() {
 
 }
 
-// Adding some comments
-
-void Plotter::drawRect() {
-  // TODO: Add range error checking
-  // Raise pen
-  // Move to origin
-  // Raise Bed to pen
-  raiseBed();
-  // Move to top right corner (length)
-  // Move to bottom right corner (width)
-  // Move to bottom left corner (-length)
-  // Move to top left corner (-width)
-  // Raise pen
-}
-
 void Plotter::drawRect(Point* origin, float length, float width) {
   Point* p2 = new Point(origin->x() + length, origin->y());
   Point* p3 = new Point(origin->x() + length, origin->y() + width);
