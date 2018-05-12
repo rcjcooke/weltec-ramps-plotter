@@ -36,8 +36,9 @@ void setup() {
   // Serial interface setup
   Serial.begin(115200);
 
-  // Creates Plotter controller and homes it
+  // Create Plotter controller and home it
   mPlotter = new Plotter();
+  // Create the initial Serial Menu
   mMainMenu = new MainMenu(new SerialDisplayMenuConfiguration(SerialDisplayType::ansi_vt100, false, 1000), mPlotter);
 }
 
@@ -46,5 +47,6 @@ void setup() {
  *******************************/
 
 void loop() {
+  // The menu runs the show - this will never exit
   SerialDisplayMenu::userInputLoop(mMainMenu);
 }
