@@ -1,12 +1,7 @@
 #include "Plotter.hpp"
 #include "Kinematics.hpp"
 
-// X Axis 30000 steps = 222mm
-// Y Axis 20000 steps = 150 mm
-
-#define PEN_LOWER_POSITION 5000
-
-
+#define PEN_LOWER_POSITION 10000
 
 /*******************************
  * Constructors
@@ -39,9 +34,7 @@ void Plotter::drawRect(Point* origin, float length, float width) {
   Point* p2 = new Point(origin->x() + length, origin->y());
   Point* p3 = new Point(origin->x() + length, origin->y() + width);
   Point* p4 = new Point(origin->x(), origin->y()  + width);
-  // TODO: Add range error checking
-  // Raise pen
-   // Move to origin
+  // Move to origin
   moveTo(origin);
   // Raise Bed to pen
   raiseBed();
@@ -53,7 +46,7 @@ void Plotter::drawRect(Point* origin, float length, float width) {
   moveTo(p4);
   // Move to top left corner (-width)
   moveTo(origin);
-  // Raise pen
+  // Lower bed away from pen
   lowerBed();
 }
 
@@ -96,20 +89,7 @@ void Plotter::drawCircle(Point* centre, float radius) {
 }
 
 void Plotter::drawCircle() {
-  // // Start on the circumference of the circle
-  // mXAxis->moveTo(5000);
-  // mYAxis->moveTo(10000);
 
-  // // (x – h)^2 + (y – k)^2 = r^2
-  
-  // // Centre at 10000, 10000
-  // Point* centreOffset = new Point(10000, 10000);
-  // float radius = 5000;
-  // // Circle with a radus of 5000 steps
-  // long x = 0;
-  // while (true) {
-    
-  // }
 }
 
 void Plotter::raiseBed() {
@@ -158,28 +138,28 @@ void Plotter::moveTo(Point* toPoint) {
 
     // Work out the increment we need in X to get a single step increment in Y
     // And make sure it's going the right way!
-    float xinc = 1/m * (deltaX > 0 ? 1 : -1);
-
-    float fincrements = (stepsThere->x() - stepsHere->x()) / xinc;
-    long incs = fincrements;
+    float xinc = abs(1/m) * (deltaX >=0 ? 1 : -1);
     float x = stepsHere->x();
 
-    if (VERBOSE) {
-      Serial.println("MoveTo: DL: m=" + String(m) + " b=" + String(b) + " xinc=" + String(xinc));
-      Serial.println("MoveTo: DL: fincrements=" + String(fincrements) + " incs=" + String(incs));
-    }
-  
+    if (VERBOSE) Serial.println("MoveTo: DL: m=" + String(m) + " b=" + String(b) + " xinc=" + String(xinc));
+
+    // Turn the motors on
     mXAxis->enable();
     mYAxis->enable();
 
-    for (long i=0; i<incs; i++) {
-      if (DEBUG) Serial.println("MoveTo: x: " + String(x));
-      mXAxis->moveTo(x, false);
-      float y2 = m*(x+xinc) + b;
-      if (DEBUG) Serial.println("MoveTo: y: " + String(y2));
-      mYAxis->moveTo(y2, false);
+    bool done = false;
+    // Loop through sensible steps on the path (xinc)
+    while(!done) {
       x = x + xinc;
+      float y = m*x + b;
+      long stepX = x;
+      long stepY = y;
+      mXAxis->moveTo(stepX, false);
+      mYAxis->moveTo(stepY, false);
+      if (stepX == (long) stepsThere->x()) done = true;
     }
+
+    // Turn the motors off
     mXAxis->disable();
     mYAxis->disable();
   }

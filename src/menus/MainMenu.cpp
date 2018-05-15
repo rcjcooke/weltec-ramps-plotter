@@ -15,7 +15,8 @@ void MainMenu::printMenu() {
   Serial << "  Please choose a menu item by number." << endl << endl;
   Serial << "\t[1] Level Bed" << endl;
   Serial << "\t[2] Calibrate Axes" << endl;
-  Serial << "\t[3] Draw" << endl << endl;
+  Serial << "\t[3] Draw" << endl;
+  Serial << "\t[4] Home all axes" << endl << endl;  
   Serial << "  Choice (number followed by enter): ";
 }
 
@@ -28,8 +29,10 @@ SerialDisplayMenu* MainMenu::processUserInput(String userInput) {
     displayError("Not implemented yet");
   } else if (userInput.equals("3")) {
     returnMenu = new DrawMenu(getSerialDisplayMenuConfiguration(), this, mPlotter);
+  } else if (userInput.equals("4")) {
+    mPlotter->home();
   } else {
-    displayError("Please pick either 1, 2 or 3. You entered " + String(userInput));
+    displayError("Please pick either 1, 2, 3 or 4. You entered " + String(userInput));
   }
   return returnMenu;
 }

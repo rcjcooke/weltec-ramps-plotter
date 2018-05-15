@@ -45,6 +45,8 @@ public:
   void calibrate(Axis axis);
   // Move the pen from it's current location to the specified point - in a straight line
   void moveTo(Point* toPoint);
+  // Move the pen to the home position
+  void home();
   
 protected:
 private:
@@ -56,8 +58,6 @@ private:
   // Lower the bed away from the pen
   void lowerBed();
 
-  // Move the pen to the home position
-  void home();
 
   /*******************************
    * Member variables (fields)
